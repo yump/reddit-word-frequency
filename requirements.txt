@@ -2,4 +2,8 @@ PyYAML==3.10
 argparse==1.2.1
 docopt==0.6.1
 nltk==2.0.4
+praw==2.1.9
+requests==2.0.0
+six==1.4.1
+update-checker==0.6
 wsgiref==0.1.2
