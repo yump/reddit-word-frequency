@@ -28,13 +28,19 @@
         -h --help            Show this screen.
         -n --num-words=<n>   Number of most-frequently-used words [default: 25].
 
-# NLTK pacakges:
+# Dependencies:
 
-## Required
+## Python Modules:
 
-corpora::stopwords
+* praw
+* nltk
+* docopt
+
+## Required NLTK packages
+
+corpora::stopwords  
 models::punkt
 
-## Optional
+## Optional NLTK packages
 
 corpora::wordnet

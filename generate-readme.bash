@@ -11,5 +11,5 @@ printf "\n## word_frequency.py\n\n" >>"$readme_fn"
 ./word_frequency.py -h | sed 's/^/    /' >>"$readme_fn"
 
 echo '' >>"$readme_fn"
-cat nltk-required-packages.md >>"$readme_fn"
+cat required-packages.md >>"$readme_fn"
 
