@@ -1,0 +1,6 @@
+gt
+( ) { } [ ] . , %
+http
+one
+time
+way
