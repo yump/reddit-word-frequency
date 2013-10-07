@@ -36,6 +36,12 @@ import itertools
 version="get_comment_text v0.2"
 user_agent="I thought what I'd do was I'd scrape some Reddit comments."
 
+class ProgressInd:
+    def set(self,level):
+        sys.stderr.write("\r{:.2%}".format(level))
+    def complete(self):
+        sys.stderr.write("\n")
+
 def wrap_praw_it(it,get_more=False):
     """
     comments objects can return a praw.objects.MoreComments, if there
@@ -72,15 +78,16 @@ def get_subreddit_comments(subreddit_name,sort="hot",num_posts=50):
         raise ValueError("Sort must be one of {hot, top_all, top_year,"
                 "top_month, top_week, top_day, top_hour}.")
 
-    comment_gengen = (
-            (
-                c.body
-                for c in wrap_praw_it(p.comments,get_more=True)
-            )
-            for p in postings 
-            )
+    def comment_gen():
+        progress = ProgressInd()
+        for px,p in enumerate(postings):
+            num_comments = p.num_comments
+            for cx,c in enumerate(wrap_praw_it(p.comments,get_more=True)):
+                yield c.body
+                progress.set( (1.0*cx/num_comments + px)/num_posts )
+        progress.complete()
 
-    return itertools.chain.from_iterable(comment_gengen)
+    return comment_gen()
 
 def get_user_comments(
         redditor_name, 
@@ -90,8 +97,8 @@ def get_user_comments(
     ## Retrieve posts from reddit
     conn = praw.Reddit(user_agent=user_agent)
     posts = conn.get_redditor(redditor_name).get_comments(limit=num_comments)
-
-    # Make one big blob of text from the posts.
+    
+    ## generator over posts
     return (post.body for post in posts)
 
 if __name__ == "__main__":
@@ -106,7 +113,7 @@ if __name__ == "__main__":
         comgen = get_subreddit_comments(
                 args['<subreddit_name>'],
                 sort=args['--sort'],
-                num_posts=args['--num']
+                num_posts=int(args['--num'])
             )
 
     for comment in comgen:
