@@ -17,13 +17,14 @@
 
 Usage:
     get_comment_text.py user <username> -n num_comments
-    get_comment_text.py subreddit <subreddit_name> -n num_posts [-s sort_type]
+    get_comment_text.py subreddit [options] <subreddit_name> -n num_posts
 
 Options:
     -n --num=<n>      Number of comments, or number of submissions to scrape.
     -s --sort=<type>  Type of sorting to use for subreddit comment scraping.
                       Sort types are: hot, top_year, top_month, top_week,
                       top_day, top_hour. [default: hot]
+    -d --descend      Descend into the intially hidden comments.  Very slow.
     -h --help         Help message.
     -v --version      Version information.
 """
@@ -48,8 +49,9 @@ class ProgressInd:
             eta = rem/rate
         except ZeroDivisionError:
             eta = 1000000.0
-        sys.stderr.write("   \r{:.2%} Eta: {}".format(
-            level,
+        sys.stderr.write("   \r{:.2%} ".format(level))
+        sys.stderr.write("Elapsed: {} Eta: {}".format(
+            self.time_format(elapsed),
             self.time_format(eta)
             )
             )
@@ -77,7 +79,14 @@ def wrap_praw_it(it,get_more=False):
             for inner_obj in wrap_praw_it(obj.comments(update=True)):
                 yield inner_obj
 
-def get_subreddit_comments(subreddit_name,sort="hot",num_posts=50):
+def get_subreddit_comments(
+        subreddit_name,
+        sort="hot",
+        num_posts=50,
+        follow_more=False
+        ):
+    if follow_more:
+        sys.stderr.write("Warning: descending into hidden comments is slow.\n")
     conn = praw.Reddit(user_agent=user_agent)
     sub = conn.get_subreddit(subreddit_name)
 
@@ -103,7 +112,7 @@ def get_subreddit_comments(subreddit_name,sort="hot",num_posts=50):
         progress = ProgressInd()
         for px,p in enumerate(postings):
             num_comments = p.num_comments
-            for cx,c in enumerate(wrap_praw_it(p.comments,get_more=True)):
+            for cx,c in enumerate(wrap_praw_it(p.comments,follow_more)):
                 yield c.body
                 progress.set( (1.0*cx/num_comments + px)/num_posts )
         progress.complete()
@@ -134,7 +143,8 @@ if __name__ == "__main__":
         comgen = get_subreddit_comments(
                 args['<subreddit_name>'],
                 sort=args['--sort'],
-                num_posts=int(args['--num'])
+                num_posts=int(args['--num']),
+                follow_more=args['--descend']
             )
 
     for comment in comgen:
