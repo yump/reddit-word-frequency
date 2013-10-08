@@ -36,19 +36,18 @@ import re
 import itertools
 import pickle
 from collections import Counter
+from wordmapper import WordMapper
 
 tagger_fn = "tagger.pkl"
+wordmap_files = ['equivs.txt','hard_lowercase.txt']
 
-re_apostrophe_char = re.compile("^(.*)'[ds]")
-re_url = re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&#+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+') #oh my lord
-
-def word_equiv(word):
-    match = re_apostrophe_char.match(word)
-    if (match):
-        return match.group(1)
-    else:
-        return word
-    
+#John Gruber URL Matcher (Holy canoli!)
+re_url = re.compile(
+    ur'(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)'
+    ur'(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\('
+    ur'([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?'
+    ur'\xab\xbb\u201c\u201d\u2018\u2019]))'
+    )
 
 def get_tagger():
     try:
@@ -120,22 +119,27 @@ def get_words_simple(text):
     Simple word extractor. Removes punctuation at ends of words, and
     capitalization at beginnings of sentences.
     """
-    # Words that should be lowercased
+    # Words that should be lowercased if at the beginning of a sentence
     with open("lowercase.txt") as lcfile:
         lowercase = set(lcfile.read().decode("utf8").split())
+        
+    # General purpose word mapper
+    mapper = WordMapper(*wordmap_files)
 
     # start pooping words
     for sent in sent_tokenize(text):
-        for wx, w in enumerate(re.findall('[a-zA-Z0-9\']+',sent)):
-            w = word_equiv(w)
+        for wx, w in enumerate(re.findall('[a-zA-Z0-9\'-]+',sent)):
+            if re.match('^[0-9]+$',w): #no numerals
+                continue
             if wx==0:
                 # Uncap if only the first letter is capped.
                 if w.lower() in lowercase:
-                    yield w.lower()
+                    result = w.lower()
                 else:
-                    yield w
+                    result = w
             else:
-                yield w
+                result = w
+            yield mapper.map(result)
             
 def main(
         infile_name,
