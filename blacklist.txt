@@ -1,6 +1,4 @@
-gt
-less
-I
+-
 1
 2
 3
@@ -10,11 +8,7 @@ I
 7
 8
 9
-yes
-The
-long
-tell
-ever
+I
 I'd
 I'll
 I'm
@@ -30,6 +24,7 @@ an
 and
 any
 are
+aren't
 around
 at
 be
@@ -48,6 +43,7 @@ do
 doesn't
 don't
 even
+ever
 every
 few
 find
@@ -58,8 +54,10 @@ go
 going
 good
 got
+gt
 ha
 had
+hasn't
 have
 he
 he's
@@ -78,11 +76,16 @@ it's
 just
 kind
 know
+least
+less
+let
 like
+long
 look
 lot
 make
 many
+maybe
 me
 mean
 might
@@ -105,6 +108,7 @@ part
 pretty
 put
 quite
+really
 said
 same
 say
@@ -118,6 +122,7 @@ some
 still
 such
 take
+tell
 than
 that
 that's
@@ -129,6 +134,7 @@ there
 there's
 these
 they
+they're
 thing
 think
 this
@@ -137,12 +143,15 @@ through
 time
 to
 too
+two
 up
+us
 use
 using
 very
 wa
 want
+wasn't
 way
 we
 well
@@ -160,8 +169,9 @@ with
 without
 work
 would
+wouldn't
+yes
+yet
 you
 you're
 your
-really
-maybe

@@ -3,10 +3,11 @@
 America america
 American american
 CPU CPUs
+I'd i'd
+I'll i'll
 I'm i'm
+I've i've
 MRA MRAs
-want wants
-ok OK okay
 apologize apologized apologizes
 argument arguments
 atheism atheist atheists athiest athiests
@@ -23,6 +24,7 @@ gender genders
 keyboard keyboards
 kill killed kills killing killer killers
 machine machines
+ok OK okay
 poison poisoned poisoning poisoner poisoners
 rape raped rapes raping rapist rapists
 republican republicans
@@ -32,3 +34,4 @@ so So
 theist theists
 traditionalism traditionalists traditionalist Traditionalism Traditionalist Traditionalists
 victim victims
+want wants
