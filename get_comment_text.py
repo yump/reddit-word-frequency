@@ -32,15 +32,36 @@ from docopt import docopt
 import praw
 import sys
 import itertools
+import time
 
 version="get_comment_text v0.2"
 user_agent="I thought what I'd do was I'd scrape some Reddit comments."
 
 class ProgressInd:
+    def __init__(self):
+        self.starttime = time.time()
     def set(self,level):
-        sys.stderr.write("\r{:.2%}".format(level))
+        rem = 1.0 - level
+        elapsed = time.time() - self.starttime
+        try:
+            rate = level/elapsed
+            eta = rem/rate
+        except ZeroDivisionError:
+            eta = 1000000.0
+        sys.stderr.write("   \r{:.2%} Eta: {}".format(
+            level,
+            self.time_format(eta)
+            )
+            )
     def complete(self):
         sys.stderr.write("\n")
+    def time_format(self,seconds):
+        minutes = seconds // 60.0
+        seconds = seconds % 60.0
+        hours = minutes // 60.0
+        minutes = minutes % 60.0
+        return "{:.0f}:{:02.0f}:{:02.0f}".format(hours,minutes,seconds)
+
 
 def wrap_praw_it(it,get_more=False):
     """
