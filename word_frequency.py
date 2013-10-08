@@ -25,29 +25,24 @@ Options:
     -n --num-words=<n>   Number of most-frequently-used words [default: 25].
 """
 
+from collections import Counter
 from docopt import docopt
 import nltk
-from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.corpus import wordnet as wn
 from nltk.corpus import treebank
+from nltk.corpus import wordnet as wn
 from nltk.tag import ClassifierBasedPOSTagger
-import sys
-import re
+from nltk.tokenize import sent_tokenize, word_tokenize
+from wordmapper import WordMapper
 import itertools
 import pickle
-from collections import Counter
-from wordmapper import WordMapper
+import re
+import sys
 
 tagger_fn = "tagger.pkl"
 wordmap_files = ['equivs.txt','hard_lowercase.txt']
 
-#John Gruber URL Matcher (Holy canoli!)
-re_url = re.compile(
-    ur'(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)'
-    ur'(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\('
-    ur'([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?'
-    ur'\xab\xbb\u201c\u201d\u2018\u2019]))'
-    )
+#Russell Haley URL Matcher
+re_url = re.compile("https?://[^\s]+|[^\s]+\.[^\s]{2,3}")
 
 def get_tagger():
     try:
