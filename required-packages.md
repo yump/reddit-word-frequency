@@ -6,11 +6,17 @@
 * nltk
 * docopt
 
-## Required NLTK packages
+## NLTK packages
+
+install with `python -m nltk.downloader stopwords punkt wordnet`
+
+### Required
 
 corpora::stopwords  
 models::punkt
 
-## Optional NLTK packages
+### Optional
 
 corpora::wordnet
+
+
