@@ -32,7 +32,7 @@ from nltk.corpus import treebank
 from nltk.corpus import wordnet as wn
 from nltk.tag import ClassifierBasedPOSTagger
 from nltk.tokenize import sent_tokenize, word_tokenize
-from wordmapper import WordMapper
+import wordfilt
 import itertools
 import pickle
 import re
@@ -40,9 +40,6 @@ import sys
 
 tagger_fn = "tagger.pkl"
 wordmap_files = ['equivs.txt','hard_lowercase.txt']
-
-#Russell Haley URL Matcher
-re_url = re.compile("https?://[^\s]+|[^\s]+\.[^\s]{2,3}")
 
 def get_tagger():
     try:
@@ -119,22 +116,15 @@ def get_words_simple(text):
         lowercase = set(lcfile.read().decode("utf8").split())
         
     # General purpose word mapper
-    mapper = WordMapper(*wordmap_files)
+    mapper = wordfilt.WordMapper(*wordmap_files)
 
     # start pooping words
     for sent in sent_tokenize(text):
-        for wx, w in enumerate(re.findall('[a-zA-Z0-9\'-]+',sent)):
-            if re.match('^[0-9]+$',w): #no numerals
+        sent = wordfilt.norm_capitalization(sent)
+        for word in re.findall('[a-zA-Z0-9\'-]+',sent):
+            if re.match('^[0-9]+$',word): #no numerals
                 continue
-            if wx==0:
-                # Uncap if only the first letter is capped.
-                if w.lower() in lowercase:
-                    result = w.lower()
-                else:
-                    result = w
-            else:
-                result = w
-            yield mapper.map(result)
+            yield mapper.map(word)
             
 def main(
         infile_name,
@@ -152,8 +142,7 @@ def main(
     # Get input text.
     with open(infile_name,'rb') as infile:
         text = infile.read().decode('utf8')
-    # get rid of URLs
-    text = re_url.sub('',text)
+    text = wordfilt.clean_text(text)
     
     if (tag_pos):
         words = get_words_posfilter(text,norm_case)
